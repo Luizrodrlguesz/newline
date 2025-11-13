@@ -21,40 +21,7 @@ O projeto utiliza um sistema de variáveis CSS customizadas com as seguintes cor
 
 As cores estão definidas no arquivo `app/globals.css` usando variáveis CSS (`:root`).
 
-## 📦 Instalação
-
-```bash
-# Instalar dependências
-npm install
-
-# ou
-yarn install
-
-# ou
-pnpm install
-```
-
-## 🛠️ Desenvolvimento
-
-Para iniciar o servidor de desenvolvimento:
-
-```bash
-npm run dev
-```
-
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
-
-## 🏗️ Build para Produção
-
-```bash
-# Criar build de produção
-npm run build
-
-# Iniciar servidor de produção
-npm start
-```
-
-## 📁 Estrutura do Projeto
+<!-- ## 📁 Estrutura do Projeto
 
 ```
 newline/
@@ -71,7 +38,7 @@ newline/
 │   └── utils.ts         # Funções auxiliares
 ├── public/              # Arquivos estáticos
 └── tailwind.config.ts   # Configuração do Tailwind
-```
+``` -->
 
 ## 📱 Seções da Landing Page
 
@@ -93,33 +60,7 @@ newline/
 - ✅ Performance otimizada
 - ✅ SEO friendly
 
-## 🔧 Personalização
-
-### Cores
-
-As cores podem ser alteradas no arquivo `app/globals.css`:
-
-```css
-:root {
-  --brown: #6B4423;
-  --caramel: #C17A4F;
-  /* ... outras variáveis */
-}
-```
-
-### Conteúdo
-
-Para alterar o conteúdo, edite os componentes em `components/sections/`.
-
-## 📞 Contato
-
-- **Telefone**: (41) 3621-7074
-- **WhatsApp**: (41) 98498-2581
-- **Email**: contato@newlinepersianas.com.br
-- **Endereço**: R. Estrada da Ribeira, 2612, Maracanã, Colombo-PR
-
 ## 📄 Licença
 
 Todos os direitos reservados © 2025 New Line Persianas e Cortinas
 
-# newline
