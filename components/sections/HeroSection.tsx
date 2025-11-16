@@ -30,9 +30,9 @@ const HeroSection = () => {
           <Image
             src="/images/old-logo-1.png"
             alt="NEW LINE Logo"
-            width={500}
-            height={500}
-            className="w-auto h-auto object-contain"
+            width={400}
+            height={400}
+            className="h-auto object-contain front-logo-hero"
             priority
           />
         </motion.div>
@@ -43,7 +43,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-4xl mx-auto"
         >
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-800">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-800">
             <span className="text-[var(--brown)]">25 ANOS</span> de experiência
           </h2>
           <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed">
@@ -61,13 +61,17 @@ const HeroSection = () => {
           <a href="#contato">
             <Button
               size="lg"
-              className="gradient-brown text-white text-lg px-8"
+              className="gradient-brown text-white text-lg px-8 w-[300px]"
             >
               SOLICITE UM ORÇAMENTO
             </Button>
           </a>
           <a href="#produtos">
-            <Button size="lg" variant="outline" className="text-lg px-8">
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 w-[300px]"
+            >
               CONHEÇA NOSSOS PRODUTOS
             </Button>
           </a>

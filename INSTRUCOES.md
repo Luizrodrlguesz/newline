@@ -143,11 +143,10 @@ npm start
 - Copyright
 
 ## 🔧 Customizações Comuns
-
 ### Alterar Telefones
 
 Busque por estes números no código e substitua:
-- `4136217074`
+
 - `41984982581`
 
 ### Alterar E-mail

@@ -98,3 +98,8 @@ html {
     background-clip: text;
   }
 }
+@media (max-width: 768px) {
+.front-logo-hero{
+  width: 300px !important;
+}
+}

@@ -22,11 +22,11 @@ const Footer = () => {
             </h3>
             <div className="space-y-3">
               <a
-                href="tel:4136217074"
+
                 className="flex items-start space-x-3 hover:text-[var(--caramel-light)] transition-colors"
               >
                 <Phone className="w-5 h-5 mt-1 flex-shrink-0" />
-                <span>(41) 3621-7074</span>
+
               </a>
               <a
                 href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"

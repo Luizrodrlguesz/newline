@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone } from "lucide-react";
 import { BsWhatsapp } from "react-icons/bs";
@@ -11,6 +11,18 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeSection, setActiveSection] = useState("inicio");
+
+  const menuItems = useMemo(
+    () => [
+      { href: "#inicio", label: "INÍCIO" },
+      { href: "#produtos", label: "PRODUTOS" },
+      { href: "#aplicacoes", label: "APLICAÇÕES" },
+      { href: "#sobre", label: "SOBRE" },
+      { href: "#contato", label: "CONTATO" },
+    ],
+    []
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,13 +43,39 @@ const Header = () => {
     };
   }, []);
 
-  const menuItems = [
-    { href: "#inicio", label: "INÍCIO" },
-    { href: "#produtos", label: "PRODUTOS" },
-    { href: "#aplicacoes", label: "APLICAÇÕES" },
-    { href: "#sobre", label: "SOBRE" },
-    { href: "#contato", label: "CONTATO" },
-  ];
+  useEffect(() => {
+    const sectionElements = menuItems
+      .map((item) => {
+        const id = item.href.replace("#", "");
+        return document.getElementById(id);
+      })
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (!sectionElements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleSection = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visibleSection?.target.id) {
+          setActiveSection(visibleSection.target.id);
+        }
+      },
+      {
+        rootMargin: "-40% 0px -40% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    );
+
+    sectionElements.forEach((section) => observer.observe(section));
+
+    return () => {
+      sectionElements.forEach((section) => observer.unobserve(section));
+      observer.disconnect();
+    };
+  }, [menuItems]);
 
   const handleMenuClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -49,6 +87,7 @@ const Header = () => {
     const targetElement = document.getElementById(targetId);
 
     if (targetElement) {
+        setActiveSection(targetId);
       setIsMenuOpen(false);
 
       setTimeout(
@@ -97,16 +136,25 @@ const Header = () => {
           </a>
 
           <div className="hidden lg:flex items-center space-x-8">
-            {menuItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={(e) => handleMenuClick(e, item.href)}
-                className="text-sm font-medium text-gray-700 hover:text-[var(--brown)] transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
+            {menuItems.map((item) => {
+              const itemId = item.href.replace("#", "");
+              const isActive = activeSection === itemId;
+
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => handleMenuClick(e, item.href)}
+                  className={`relative text-sm font-medium transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-[var(--brown)] after:transition-transform after:duration-300 after:content-[''] ${
+                    isActive
+                      ? "text-[var(--brown)] after:scale-x-100"
+                      : "text-gray-700 hover:text-[var(--brown)] hover:after:scale-x-100"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
             <a
               href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"
               target="_blank"
@@ -142,16 +190,25 @@ const Header = () => {
               className="lg:hidden overflow-hidden"
             >
               <div className="py-4 space-y-4 border-t border-gray-200">
-                {menuItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={(e) => handleMenuClick(e, item.href)}
-                    className="block text-base font-medium text-gray-700 hover:text-[var(--brown)] transition-colors"
-                  >
-                    {item.label}
-                  </a>
-                ))}
+                {menuItems.map((item) => {
+                  const itemId = item.href.replace("#", "");
+                  const isActive = activeSection === itemId;
+
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      onClick={(e) => handleMenuClick(e, item.href)}
+                      className={`block text-base font-medium transition-colors ${
+                        isActive
+                          ? "text-[var(--brown)]"
+                          : "text-gray-700 hover:text-[var(--brown)]"
+                      }`}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                })}
                 <div className="pt-4">
                   <a
                     href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"

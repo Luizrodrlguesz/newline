@@ -111,12 +111,6 @@ const ContactSection = () => {
                       Telefones
                     </h3>
                     <a
-                      href="tel:4136217074"
-                      className="block text-gray-600 hover:text-[var(--brown)] transition-colors mb-1"
-                    >
-                      (41) 3621-7074
-                    </a>
-                    <a
                       href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"
                       target="_blank"
                       rel="noopener noreferrer"
