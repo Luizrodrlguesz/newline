@@ -144,7 +144,7 @@ const ContactSection = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow">
+            {/* <Card className="hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center flex-shrink-0">
@@ -167,7 +167,7 @@ const ContactSection = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </motion.div>
 
           <motion.div
