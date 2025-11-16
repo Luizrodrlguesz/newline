@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { X } from "lucide-react";
 
 interface ProductVariant {
   name: string;
@@ -227,6 +228,8 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, index }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -238,6 +241,17 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
 
   useEffect(() => {
     setMounted(true);
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
   }, []);
 
   useEffect(() => {
@@ -332,6 +346,24 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
     };
   }, [isHovered, index]);
 
+  const handleCardClick = () => {
+    if (isMobile) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCardMouseEnter = () => {
+    if (!isMobile) {
+      setIsHovered(true);
+    }
+  };
+
+  const handleCardMouseLeave = () => {
+    if (!isMobile) {
+      setIsHovered(false);
+    }
+  };
+
   return (
         <motion.div
       ref={cardRef}
@@ -339,11 +371,12 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
-      className="relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`relative ${isMobile ? 'cursor-pointer' : ''}`}
+      onMouseEnter={handleCardMouseEnter}
+      onMouseLeave={handleCardMouseLeave}
+      onClick={handleCardClick}
             >
-      <Card className="group overflow-visible hover:shadow-xl transition-all duration-300 h-full flex flex-col">
+      <Card className={`group overflow-visible hover:shadow-xl transition-all duration-300 h-full flex flex-col ${isMobile ? 'active:scale-[0.98]' : ''}`}>
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                   <Image
                     src={product.image}
@@ -362,7 +395,8 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                 </CardContent>
       </Card>
 
-      {mounted &&
+      {/* Popup para Desktop (hover) - mantém comportamento original */}
+      {mounted && !isMobile &&
         createPortal(
           <AnimatePresence>
             {isHovered && popupPosition.top > 0 && (
@@ -441,6 +475,103 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
           </AnimatePresence>,
           document.body
         )}
+
+      {/* Modal para Mobile (click) */}
+      {mounted && isMobile &&
+        createPortal(
+          <AnimatePresence>
+            {isModalOpen && (
+              <>
+                {/* Backdrop */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 bg-black/50 z-[9998] flex items-center justify-center p-4"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  {/* Modal */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="relative z-[9999] w-full max-w-[500px] max-h-[90vh] overflow-hidden bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                      <h3 className="text-xl font-bold text-gray-800">
+                        {product.category}
+                      </h3>
+                      <button
+                        onClick={() => setIsModalOpen(false)}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        aria-label="Fechar modal"
+                      >
+                        <X className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto p-6">
+                    <div className="h-1 w-20 bg-gradient-to-r from-[var(--brown)] to-[var(--caramel)] rounded-full mb-4"></div>
+                    <p className="text-gray-600 mb-6">{product.description}</p>
+
+                    <div className="mb-6">
+                      <h4 className="font-semibold text-lg text-gray-800 mb-3">
+                        Tipos Disponíveis:
+                      </h4>
+                      <div className="space-y-4">
+                        {product.variants.map((variant, idx) => (
+                          <div
+                            key={idx}
+                            className="flex gap-4 p-3 rounded-lg bg-gray-50"
+                          >
+                            <div className="relative w-24 h-24 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
+                              <Image
+                                src={variant.image}
+                                alt={variant.name}
+                                fill
+                                className="object-cover"
+                                sizes="96px"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-gray-800 mb-1">
+                                {variant.name}
+                              </h5>
+                              <p className="text-sm text-gray-600">
+                                {variant.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-lg text-gray-800 mb-3">
+                        Características:
+                      </h4>
+                      <ul className="space-y-2">
+                        {product.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <span className="text-[var(--brown)] mt-1">✓</span>
+                            <span className="text-sm text-gray-600">
+                              {feature}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </motion.div>
   );
 };
@@ -458,8 +589,14 @@ const ProductsSection = () => {
         >
           <h2 className="text-gradient mb-4">PRODUTOS</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Passe o mouse sobre os cards para conhecer mais sobre cada tipo de
-            persiana e cortina
+            <span className="hidden md:inline">
+              Passe o mouse sobre os cards para conhecer mais sobre cada tipo de
+              persiana e cortina
+            </span>
+            <span className="md:hidden">
+              Toque nos cards para conhecer mais sobre cada tipo de
+              persiana e cortina
+            </span>
           </p>
         </motion.div>
 
