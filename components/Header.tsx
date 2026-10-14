@@ -104,12 +104,16 @@ const Header = () => {
   const whatsappHref =
     "https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!";
 
+  // Sticky com altura 0, e não fixed: o Safari do iPhone troca o vidro da
+  // barra de endereço por uma tarja chapada enquanto existir qualquer elemento
+  // fixed na tela. Com h-0 ele não ocupa espaço e a barra flutua sobre o hero
+  // como antes; sticky funciona porque é filho direto do <main>.
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 px-3 transition-all duration-300 sm:px-4 ${
+      className={`sticky top-0 z-50 h-0 px-3 transition-all duration-300 sm:px-4 ${
         isScrolled ? "pt-2" : "pt-4"
       }`}
     >

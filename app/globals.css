@@ -40,7 +40,12 @@
 }
 
 body {
-  background-color: var(--bg-color);
+  /* O Safari do iPhone pinta a faixa da hora/bateria (topo) e a da barra de
+     endereço (base) com o background-color do body, não com o site. O topo
+     (hero) e o fim (footer) são marrom escuro: com o bege aqui sobravam duas
+     tarjas claras. Todas as seções têm fundo próprio, então o body não aparece
+     em mais lugar nenhum. */
+  background-color: #17120f;
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
