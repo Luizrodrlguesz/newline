@@ -37,8 +37,8 @@ const AboutSection = () => {
               <p>
                 Com mais de{" "}
                 <strong className="text-gray-800">25 anos de experiência</strong>{" "}
-                na fabricação, instalação e manutenção de persianas, cortinas e
-                toldos em diversos materiais e para variadas aplicações, a{" "}
+                na fabricação, instalação e manutenção de persianas e cortinas
+                em diversos materiais e para variadas aplicações, a{" "}
                 <strong className="text-gray-800">New Line</strong> é uma
                 empresa focada em promover conforto e usabilidade aos espaços
                 onde colabora.

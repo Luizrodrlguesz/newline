@@ -28,7 +28,7 @@ const applications: Application[] = [
     icon: Warehouse,
     label: "Garagem",
     description:
-      "Toldos e cortinas que protegem do sol e da chuva, mantendo a garagem organizada e o carro preservado.",
+      "Persianas e cortinas que controlam a luz e o calor, deixando a garagem mais organizada e agradável.",
     image: "/images/aplicacoes/garagem.jpg",
   },
   {
@@ -42,35 +42,35 @@ const applications: Application[] = [
     icon: Building2,
     label: "Deck",
     description:
-      "Coberturas e toldos que deixam o deck agradável a qualquer hora, sem abrir mão da vista.",
+      "Cortinas e persianas que deixam o deck coberto agradável a qualquer hora, sem abrir mão da vista.",
     image: "/images/aplicacoes/deck.jpg",
   },
   {
     icon: Home,
     label: "Pátios",
     description:
-      "Sombra na medida certa para transformar o pátio em um espaço de convivência confortável.",
+      "Cortinas que filtram a luz na medida certa e transformam o pátio coberto em um espaço de convivência.",
     image: "/images/aplicacoes/patios.jpg",
   },
   {
     icon: Waves,
     label: "Piscina",
     description:
-      "Toldos e cortinas resistentes ao sol e à umidade para curtir a área da piscina com mais conforto.",
+      "Cortinas e persianas resistentes ao sol e à umidade para a área coberta da piscina.",
     image: "/images/aplicacoes/piscina.jpg",
   },
   {
     icon: Building2,
     label: "Terraço",
     description:
-      "Proteção contra sol, vento e chuva para aproveitar o terraço o ano inteiro.",
+      "Cortinas e persianas que controlam a luz e garantem privacidade para aproveitar o terraço o ano inteiro.",
     image: "/images/aplicacoes/terraco.jpg",
   },
   {
     icon: Home,
     label: "Áreas de lazer",
     description:
-      "Soluções que deixam churrasqueiras e espaços gourmet protegidos e prontos para receber.",
+      "Cortinas e persianas que deixam churrasqueiras e espaços gourmet aconchegantes e prontos para receber.",
     image: "/images/aplicacoes/areas-de-lazer.jpg",
   },
   {
@@ -84,14 +84,14 @@ const applications: Application[] = [
     icon: Wine,
     label: "Bares",
     description:
-      "Cortinas e toldos que criam o clima certo e ampliam o espaço útil para os clientes.",
+      "Cortinas e persianas que criam o clima certo e deixam o ambiente mais aconchegante para os clientes.",
     image: "/images/aplicacoes/bares.jpg",
   },
   {
     icon: Store,
     label: "Lojas",
     description:
-      "Fachadas e vitrines protegidas do sol, valorizando os produtos e o conforto de quem compra.",
+      "Persianas e cortinas que protegem vitrines e produtos do sol, valorizando o conforto de quem compra.",
     image: "/images/aplicacoes/lojas.jpg",
   },
   {

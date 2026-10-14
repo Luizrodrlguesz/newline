@@ -126,7 +126,7 @@ const HeroSection = () => {
             className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)] sm:text-sm"
           >
             <span className="h-px w-10 bg-[var(--caramel)]" />
-            Persianas · Cortinas · Toldos
+            Persianas · Cortinas
           </motion.p>
 
           <motion.h1
@@ -145,7 +145,7 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.25 }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-white/80 md:text-xl"
           >
-            Persianas, cortinas e toldos com qualidade, garantia e os melhores
+            Persianas e cortinas com qualidade, garantia e os melhores
             preços de Curitiba e região.
           </motion.p>
 

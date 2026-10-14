@@ -13,8 +13,8 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "New Line - Persianas e Cortinas em Curitiba",
   description:
-    "25 anos de experiência em persianas, cortinas e toldos. Qualidade, garantia e os melhores preços de Curitiba e região.",
-  keywords: "persianas, cortinas, toldos, Curitiba, New Line",
+    "25 anos de experiência em persianas e cortinas. Qualidade, garantia e os melhores preços de Curitiba e região.",
+  keywords: "persianas, cortinas, Curitiba, New Line",
   authors: [{ name: "New Line Persianas" }],
   robots: "index,follow,all",
   // Favicon que acompanha o tema do navegador: o SVG troca sozinho entre o NL
