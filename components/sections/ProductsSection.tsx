@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
+import SpotlightCard from "@/components/ui/spotlight-card";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -221,6 +221,17 @@ const products: Product[] = [
   },
 ];
 
+/**
+ * Grade bento simétrica para os 7 produtos (inspirada no Magic Bento da React
+ * Bits): no desktop são 3 colunas com o primeiro e o último card largos,
+ * formando um desenho espelhado (largo+1 / 1+1+1 / 1+largo); no tablet são 2
+ * colunas com o primeiro card largo no topo e três pares abaixo.
+ */
+const BENTO_SPANS: Record<number, string> = {
+  0: "md:col-span-2",
+  6: "md:col-span-1 lg:col-span-2",
+};
+
 interface ProductCardProps {
   product: Product;
   index: number;
@@ -237,7 +248,9 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
     top: number;
     left: number;
     side: "right" | "left";
+    maxHeight?: number;
   }>({ top: 0, left: 0, side: "right" });
+  const updatePositionRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -270,7 +283,16 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
       // Largura do popup (responsiva)
       const popupWidth = Math.min(400, viewportWidth * 0.9);
       const spacing = 20;
-      const popupMaxHeight = Math.min(600, viewportHeight * 0.8);
+      // Área útil na vertical: abaixo do header flutuante e com uma margem
+      // embaixo. O popup nunca passa disso (se não couber, rola por dentro).
+      const topSafe = 96;
+      const bottomSafe = 16;
+      const maxHeight = viewportHeight - topSafe - bottomSafe;
+      // Altura real quando o popup já está na tela; antes disso, uma estimativa.
+      const popupHeight = Math.min(
+        popupRef.current?.scrollHeight ?? Math.min(600, maxHeight),
+        maxHeight
+      );
 
 
       const spaceRight = viewportWidth - cardRect.right;
@@ -286,18 +308,9 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
         side = "right";
       } else {
 
-        let colsPerRow = 1;
-        if (viewportWidth >= 1280) {
-          colsPerRow = 4;
-        } else if (viewportWidth >= 1024) {
-          colsPerRow = 3;
-        } else if (viewportWidth >= 640) {
-          colsPerRow = 2;
-        }
-
-        const positionInRow = index % colsPerRow;
-        
-        const shouldOpenLeft = positionInRow >= Math.ceil(colsPerRow / 2);
+        // Abre para o lado com mais espaço em relação ao centro do card.
+        const shouldOpenLeft =
+          cardRect.left + cardRect.width / 2 > viewportWidth / 2;
 
         if (shouldOpenLeft && spaceLeft >= popupWidth + spacing) {
           left = cardRect.left - popupWidth - spacing;
@@ -316,22 +329,19 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
         }
       }
 
-      top = cardRect.top;
-      
-      if (cardRect.top + popupMaxHeight > viewportHeight) {
-        top = Math.max(20, cardRect.bottom - popupMaxHeight);
-      }
-
-      if (top < 20) {
-        top = 20;
-      }
+      // Alinha com o topo do card e empurra para cima o quanto for preciso
+      // para caber inteiro na tela, sem subir por trás do header.
+      top = Math.min(cardRect.top, viewportHeight - bottomSafe - popupHeight);
+      top = Math.max(topSafe, top);
 
       setPopupPosition({
         top,
         left,
         side,
+        maxHeight,
       });
     };
+    updatePositionRef.current = updatePosition;
 
     requestAnimationFrame(() => {
       updatePosition();
@@ -343,8 +353,15 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
     return () => {
       window.removeEventListener("scroll", updatePosition);
       window.removeEventListener("resize", updatePosition);
+      updatePositionRef.current = null;
     };
-  }, [isHovered, index]);
+  }, [isHovered]);
+
+  // Quando o popup aparece, recalcula com a altura real dele.
+  const popupVisible = isHovered && popupPosition.top > 0;
+  useEffect(() => {
+    if (popupVisible) updatePositionRef.current?.();
+  }, [popupVisible]);
 
   const handleCardClick = () => {
     if (isMobile) {
@@ -371,29 +388,42 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
-      className={`relative ${isMobile ? 'cursor-pointer' : ''}`}
+      className={`relative h-72 md:h-auto ${BENTO_SPANS[index] ?? ""} ${isMobile ? "cursor-pointer" : ""}`}
       onMouseEnter={handleCardMouseEnter}
       onMouseLeave={handleCardMouseLeave}
       onClick={handleCardClick}
             >
-      <Card className={`group overflow-visible hover:shadow-xl transition-all duration-300 h-full flex flex-col ${isMobile ? 'active:scale-[0.98]' : ''}`}>
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                </div>
-                <CardContent className="p-4 flex-grow">
-                  <h3 className="font-bold text-lg mb-2 text-gray-800">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{product.description}</p>
-                </CardContent>
-      </Card>
+      <SpotlightCard
+        spotlightColor="rgba(227, 174, 70, 0.9)"
+        intensity={0.25}
+        spotlightSize={320}
+        borderGlow={0.9}
+        className={`group h-full rounded-2xl ${isMobile ? "active:scale-[0.98]" : ""} transition-transform duration-300`}
+        style={
+          {
+            "--spotlight-card-surface": "#1f1915",
+            "--spotlight-card-border": "rgba(255, 255, 255, 0.08)",
+          } as React.CSSProperties
+        }
+      >
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          className="-z-20 object-cover transition-transform duration-700 group-hover:scale-105"
+          sizes={index === 0 || index === 6 ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+        />
+        <div className="absolute inset-0 -z-[15] bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+        <div className="relative flex h-full flex-col justify-end p-6">
+          <span className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-[var(--caramel)]">
+            {product.variants.length} opções
+          </span>
+          <h3 className="font-display text-xl font-bold text-white md:text-2xl">
+            {product.name}
+          </h3>
+          <p className="mt-1 text-sm text-white/70">{product.description}</p>
+        </div>
+      </SpotlightCard>
 
       {/* Popup para Desktop (hover) - mantém comportamento original */}
       {mounted && !isMobile &&
@@ -406,10 +436,11 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -10 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="fixed z-[9999] w-[90vw] max-w-[400px] max-h-[80vh] overflow-y-auto bg-white rounded-lg shadow-2xl border border-gray-200"
+                className="fixed z-[9999] w-[90vw] max-w-[400px] overflow-y-auto bg-white rounded-lg shadow-2xl border border-gray-200"
                 style={{
                   top: `${popupPosition.top}px`,
                   left: `${popupPosition.left}px`,
+                  maxHeight: popupPosition.maxHeight,
                   pointerEvents: "auto",
                 }}
                 onMouseEnter={() => setIsHovered(true)}
@@ -577,18 +608,31 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
 };
 
 const ProductsSection = () => {
+  // Fundo marrom escuro (o mesmo que fica por trás do hero, então a persiana
+  // sobe sem faixa clara). Topo mais curto que o section-padding para chegar
+  // logo no conteúdo. O `relative` é obrigatório: o bloco do hero (posicionado,
+  // com fundo) sobrepõe os primeiros 100vh desta seção e, sem ele, cobriria o
+  // título.
   return (
-    <section id="produtos" className="section-padding bg-[var(--white)]">
+    <section
+      id="produtos"
+      className="relative bg-[#17120f] pt-12 pb-16 md:pt-16 md:pb-24 lg:pt-20 lg:pb-32"
+    >
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-12"
         >
-          <h2 className="text-gradient mb-4">PRODUTOS</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)]">
+            Nossas linhas
+          </p>
+          <h2 className="mb-4 font-display font-extrabold uppercase text-white">
+            Produtos
+          </h2>
+          <p className="text-lg text-white/60 max-w-2xl mx-auto">
             <span className="hidden md:inline">
               Passe o mouse sobre os cards para conhecer mais sobre cada tipo de
               persiana e cortina
@@ -600,7 +644,7 @@ const ProductsSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:auto-rows-[260px] lg:grid-cols-3 lg:auto-rows-[280px] lg:gap-5">
           {products.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}

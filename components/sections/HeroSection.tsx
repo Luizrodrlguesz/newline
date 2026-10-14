@@ -1,100 +1,185 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import MagneticFillButton from "@/components/ui/buttons/magnetic-fill-button";
+import ArrowSlideButton from "@/components/ui/buttons/arrow-slide-button";
 import Image from "next/image";
 
-const HeroSection = () => {
+const HERO_IMAGE = "/images/persianas-bg.jpg";
+/** Quantidade de lâminas em que a foto do hero é dividida. */
+const SLATS = 12;
+
+/**
+ * Uma lâmina da "persiana": mostra a sua faixa da foto (a imagem inteira, com
+ * a altura do hero, deslocada para cima) e se recolhe para o topo conforme o
+ * scroll. As de baixo recolhem primeiro, como uma persiana subindo.
+ */
+const Slat = ({
+  index,
+  progress,
+}: {
+  index: number;
+  progress: MotionValue<number>;
+}) => {
+  const order = SLATS - 1 - index;
+  const start = (order / SLATS) * 0.55;
+  const scaleY = useTransform(progress, [start, start + 0.3], [1, 0]);
+
+  // Cada lâmina é 1px mais alta e cobre o topo da de baixo: com alturas
+  // fracionadas (1/12 da tela) o arredondamento deixava frestas por onde a
+  // seção clara de baixo aparecia. A foto interna desconta esse 1px.
   return (
-    <section
-      id="inicio"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100"
+    <motion.div
+      style={{
+        top: `${(index * 100) / SLATS}%`,
+        height: `calc(${100 / SLATS}% + 1px)`,
+        scaleY,
+      }}
+      className="absolute inset-x-0 origin-top overflow-hidden"
     >
-      <div className="absolute inset-0 opacity-[0.05]">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236B4423' fill-opacity='1' font-family='Arial, sans-serif' font-size='14' font-weight='bold'%3E%3Ctext x='10' y='20'%3EN%3C/text%3E%3Ctext x='50' y='20'%3EL%3C/text%3E%3Ctext x='10' y='60'%3EL%3C/text%3E%3Ctext x='50' y='60'%3EN%3C/text%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        ></div>
+      <div
+        className="absolute inset-x-0"
+        style={{
+          top: `calc(${-index} * (100% - 1px))`,
+          height: `calc(${SLATS} * (100% - 1px))`,
+        }}
+      >
+        <Image
+          src={HERO_IMAGE}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/40" />
       </div>
+      {index > 0 && (
+        <div className="absolute inset-x-0 top-0 h-px bg-white/[0.15]" />
+      )}
+    </motion.div>
+  );
+};
 
-      <div className="container-custom relative z-10 text-center py-20">
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-8 flex justify-center"
-        >
-          <Image
-            src="/images/old-logo-1.png"
-            alt="NEW LINE Logo"
-            width={400}
-            height={400}
-            className="h-auto object-contain front-logo-hero"
-            priority
-          />
-        </motion.div>
+/**
+ * Hero com a foto de persianas de fundo. Ao rolar, o hero fica fixo (sticky)
+ * e as lâminas sobem como uma persiana, revelando a seção de produtos que
+ * passa por baixo dele (o -mb puxa a próxima seção 100vh para cima).
+ * Técnica de sticky + useScroll adaptada do Skiper 16 (Card stack scroll) da
+ * Skiper UI — https://skiper-ui.com/v1/skiper16
+ */
+const HeroSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.35], [0, -80]);
+  // Com a persiana recolhida, o hero (sticky, z-10) fica parado e invisível
+  // em cima do começo da seção de produtos; sem isso ele roubaria o mouse
+  // dos cards de lá.
+  const pointerEvents = useTransform(scrollYProgress, (v) =>
+    v > 0.8 ? "none" : "auto"
+  );
+
+  return (
+    <div
+      ref={containerRef}
+      // Fundo igual ao da seção de produtos: o que aparece enquanto as lâminas
+      // sobem é o mesmo marrom escuro, sem faixa clara.
+      className={`bg-[#17120f] ${
+        reduceMotion ? "relative" : "relative h-[200vh] -mb-[100vh]"
+      }`}
+    >
+      <motion.section
+        id="inicio"
+        style={reduceMotion ? undefined : { pointerEvents }}
+        className={`${
+          reduceMotion ? "relative" : "sticky top-0"
+        } z-10 h-screen min-h-[560px] overflow-hidden`}
+      >
+        <div aria-hidden className="absolute inset-0">
+          {Array.from({ length: SLATS }, (_, i) => (
+            <Slat key={i} index={i} progress={scrollYProgress} />
+          ))}
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-4xl mx-auto"
+          style={reduceMotion ? undefined : { opacity: contentOpacity, y: contentY }}
+          className="container-custom relative z-10 flex h-full flex-col justify-center pt-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-800">
-            <span className="text-[var(--brown)]">25 ANOS</span> de experiência
-          </h2>
-          <p className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 leading-relaxed">
-            Persianas, Cortinas e Toldos com qualidade, garantia e os melhores
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)] sm:text-sm"
+          >
+            <span className="h-px w-10 bg-[var(--caramel)]" />
+            Persianas · Cortinas · Toldos
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="max-w-3xl font-display text-4xl font-extrabold uppercase leading-[1.02] tracking-[-0.01em] text-white sm:text-5xl lg:text-[4.25rem]"
+          >
+            <span className="text-[var(--caramel)]">25 anos</span> vestindo
+            janelas com elegância.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="mt-6 max-w-xl text-lg leading-relaxed text-white/80 md:text-xl"
+          >
+            Persianas, cortinas e toldos com qualidade, garantia e os melhores
             preços de Curitiba e região.
-          </p>
-        </motion.div>
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-        >
-          <a href="#contato">
-            <Button
-              size="lg"
-              className="gradient-brown text-white text-lg px-8 w-[300px]"
-            >
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center"
+          >
+            <MagneticFillButton href="#contato">
               SOLICITE UM ORÇAMENTO
-            </Button>
-          </a>
-          <a href="#produtos">
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 w-[300px]"
-            >
+            </MagneticFillButton>
+            <ArrowSlideButton href="#produtos">
               CONHEÇA NOSSOS PRODUTOS
-            </Button>
-          </a>
+            </ArrowSlideButton>
+          </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          style={reduceMotion ? undefined : { opacity: contentOpacity }}
+          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
         >
-          <a href="#produtos">
+          <a href="#produtos" aria-label="Ir para produtos">
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-10 h-10 rounded-full bg-[var(--brown)] flex items-center justify-center cursor-pointer hover:bg-[var(--caramel)] transition-colors"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/40 bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20"
             >
-              <ChevronDown className="w-6 h-6 text-white" />
+              <ChevronDown className="h-6 w-6 text-white" />
             </motion.div>
           </a>
         </motion.div>
-      </div>
-    </section>
+      </motion.section>
+    </div>
   );
 };
 

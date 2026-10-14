@@ -1,12 +1,35 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Send, Phone, Mail, MapPin } from "lucide-react";
+import { Send, Mail } from "lucide-react";
+import { BsWhatsapp } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+
+const LABEL =
+  "mb-2 block text-xs font-semibold uppercase tracking-[0.15em] text-gray-600";
+const FIELD =
+  "h-12 rounded-xl border-black/10 bg-[#fff] px-4 text-base text-gray-800 placeholder:text-gray-400 focus-visible:ring-[var(--caramel)] focus-visible:ring-offset-0";
+
+const contacts = [
+  {
+    icon: BsWhatsapp,
+    label: "WhatsApp",
+    value: "(41) 98498-2581",
+    href: "https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!",
+    external: true,
+  },
+  {
+    icon: Mail,
+    label: "E-mail",
+    value: "contato@newlinepersianas.com.br",
+    href: "mailto:contato@newlinepersianas.com.br",
+    external: false,
+  },
+];
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -63,245 +86,181 @@ const ContactSection = () => {
     });
   };
 
+  // Bloco único no padrão do site: painel escuro com a foto do hero e os
+  // contatos à esquerda, formulário claro à direita, borda clara arredondada.
   return (
-    <section
-      id="contato"
-      className="section-padding bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden"
-    >
-      <div className="absolute inset-0 opacity-[0.05]">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236B4423' fill-opacity='1' font-family='Arial, sans-serif' font-size='14' font-weight='bold'%3E%3Ctext x='10' y='20'%3EN%3C/text%3E%3Ctext x='50' y='20'%3EL%3C/text%3E%3Ctext x='10' y='60'%3EL%3C/text%3E%3Ctext x='50' y='60'%3EN%3C/text%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        ></div>
-      </div>
-
-      <div className="container-custom relative z-10">
+    <section id="contato" className="section-padding bg-white">
+      <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="grid grid-cols-1 overflow-hidden rounded-[32px] border-[6px] border-[#faf8f6] bg-[#faf8f6] shadow-[0_30px_70px_-30px_rgba(0,0,0,0.4)] lg:grid-cols-[0.85fr_1.4fr]"
         >
-          <h2 className="text-gradient mb-4">SOLICITE UM ORÇAMENTO</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Preencha o formulário abaixo e clique em ENVIAR. Logo entraremos em
-            contato!
-          </p>
+          {/* Painel escuro */}
+          <div className="relative overflow-hidden rounded-[26px] bg-[#17120f] p-8 text-white md:p-10 lg:p-12">
+            <Image
+              src="/images/persianas-bg.jpg"
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover opacity-25"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#17120f]/60 via-[#17120f]/80 to-[#17120f]" />
+
+            <div className="relative flex h-full flex-col">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)]">
+                Fale com a gente
+              </p>
+              <h2 className="mb-5 font-display font-extrabold uppercase leading-tight text-white">
+                Solicite um orçamento
+              </h2>
+              <p className="text-lg leading-relaxed text-white/70">
+                Preencha o formulário e clique em enviar: a mensagem segue
+                direto para o nosso WhatsApp e logo entraremos em contato!
+              </p>
+
+              <div className="mt-10 space-y-6 lg:mt-auto lg:pt-12">
+                {contacts.map((contact) => {
+                  const Icon = contact.icon;
+                  return (
+                    <a
+                      key={contact.label}
+                      href={contact.href}
+                      {...(contact.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className="group flex items-center gap-4"
+                    >
+                      <Icon className="h-6 w-6 flex-shrink-0 text-[var(--caramel)]" />
+                      <span>
+                        <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/50">
+                          {contact.label}
+                        </span>
+                        <span className="block break-all text-white transition-colors group-hover:text-[var(--caramel)]">
+                          {contact.value}
+                        </span>
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Formulário */}
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 p-6 md:p-10 lg:p-12"
+          >
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div>
+                <label htmlFor="nome" className={LABEL}>
+                  Nome completo *
+                </label>
+                <Input
+                  id="nome"
+                  name="nome"
+                  type="text"
+                  required
+                  value={formData.nome}
+                  onChange={handleChange}
+                  placeholder="Digite seu nome"
+                  className={FIELD}
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className={LABEL}>
+                  E-mail *
+                </label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="seu@email.com"
+                  className={FIELD}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <div>
+                <label htmlFor="telefone" className={LABEL}>
+                  Telefone
+                </label>
+                <Input
+                  id="telefone"
+                  name="telefone"
+                  type="tel"
+                  value={formData.telefone}
+                  onChange={handleChange}
+                  placeholder="(41) 3621-7074"
+                  className={FIELD}
+                />
+              </div>
+              <div>
+                <label htmlFor="celular" className={LABEL}>
+                  Celular *
+                </label>
+                <Input
+                  id="celular"
+                  name="celular"
+                  type="tel"
+                  required
+                  value={formData.celular}
+                  onChange={handleChange}
+                  placeholder="(41) 98498-2581"
+                  className={FIELD}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="assunto" className={LABEL}>
+                Assunto *
+              </label>
+              <Input
+                id="assunto"
+                name="assunto"
+                type="text"
+                required
+                value={formData.assunto}
+                onChange={handleChange}
+                placeholder="Qual o assunto?"
+                className={FIELD}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="mensagem" className={LABEL}>
+                Mensagem *
+              </label>
+              <Textarea
+                id="mensagem"
+                name="mensagem"
+                required
+                value={formData.mensagem}
+                onChange={handleChange}
+                placeholder="Mensagem e/ou observações"
+                rows={5}
+                className={`${FIELD} h-auto py-3`}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="group h-14 w-full rounded-full gradient-brown text-base font-semibold text-white shadow-lg transition-transform hover:scale-[1.01]"
+            >
+              <Send className="mr-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              ENVIAR MENSAGEM
+            </Button>
+          </form>
         </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2 text-gray-800">
-                      Telefones
-                    </h3>
-                    <a
-                      href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-gray-600 hover:text-[var(--brown)] transition-colors"
-                    >
-                      (41) 98498-2581 (WhatsApp)
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2 text-gray-800">
-                      E-mail
-                    </h3>
-                    <a
-                      href="mailto:contato@newlinepersianas.com.br"
-                      className="text-gray-600 hover:text-[var(--brown)] transition-colors"
-                    >
-                      contato@newlinepersianas.com.br
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* <Card className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg mb-2 text-gray-800">
-                      Endereço
-                    </h3>
-                    <a
-                      href="https://www.google.com/maps/search/?api=1&query=R.+Estrada+da+Ribeira,+2612,+Maracanã,+Colombo-PR"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-600 hover:text-[var(--brown)] transition-colors"
-                    >
-                      R. Estrada da Ribeira, 2612
-                      <br />
-                      Maracanã, Colombo-PR
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card> */}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-2"
-          >
-            <Card className="shadow-lg">
-              <CardContent className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="nome"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Nome Completo *
-                      </label>
-                      <Input
-                        id="nome"
-                        name="nome"
-                        type="text"
-                        required
-                        value={formData.nome}
-                        onChange={handleChange}
-                        placeholder="Digite seu nome"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        E-mail *
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="seu@email.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="telefone"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Telefone
-                      </label>
-                      <Input
-                        id="telefone"
-                        name="telefone"
-                        type="tel"
-                        value={formData.telefone}
-                        onChange={handleChange}
-                        placeholder="(41) 3621-7074"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="celular"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Celular *
-                      </label>
-                      <Input
-                        id="celular"
-                        name="celular"
-                        type="tel"
-                        required
-                        value={formData.celular}
-                        onChange={handleChange}
-                        placeholder="(41) 98498-2581"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="assunto"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Assunto *
-                    </label>
-                    <Input
-                      id="assunto"
-                      name="assunto"
-                      type="text"
-                      required
-                      value={formData.assunto}
-                      onChange={handleChange}
-                      placeholder="Qual o assunto?"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="mensagem"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Mensagem *
-                    </label>
-                    <Textarea
-                      id="mensagem"
-                      name="mensagem"
-                      required
-                      value={formData.mensagem}
-                      onChange={handleChange}
-                      placeholder="Mensagem e/ou observações"
-                      rows={5}
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full gradient-brown text-white text-lg"
-                  >
-                    <Send className="w-5 h-5 mr-2" />
-                    ENVIAR MENSAGEM
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
       </div>
     </section>
   );

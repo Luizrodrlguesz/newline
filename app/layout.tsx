@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
+
+// Sans geométrica próxima da tipografia do logo (NEW LINE / PERSIANAS E CORTINAS)
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "New Line - Persianas e Cortinas em Curitiba",
@@ -16,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="overflow-x-hidden">
-      <body className="overflow-x-hidden">{children}</body>
+    <html lang="pt-BR" className={`${montserrat.variable} overflow-x-clip`}>
+      <body className="overflow-x-clip">{children}</body>
     </html>
   );
 }

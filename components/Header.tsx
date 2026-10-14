@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { BsWhatsapp } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import ContactRevealButton from "@/components/ui/buttons/contact-reveal-button";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
 
   const menuItems = useMemo(
@@ -30,17 +30,11 @@ const Header = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-
-    handleResize();
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -108,35 +102,54 @@ const Header = () => {
     }
   };
 
+  const whatsappHref =
+    "https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!";
+
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isMobile || isScrolled
-          ? "bg-[var(--bg-color)] shadow-lg"
-          : "bg-[var(--bg-color)]/95 backdrop-blur-sm"
+      className={`fixed top-0 left-0 right-0 z-50 px-3 transition-all duration-300 sm:px-4 ${
+        isScrolled ? "pt-2" : "pt-4"
       }`}
     >
-      <nav className="container-custom">
-        <div className="flex items-center justify-between h-20">
+      {/*
+        Barra flutuante de vidro (glassmorphism) com fundo meio branco: branco
+        translúcido + desfoque/saturação do que passa por trás e um brilho de
+        1px no topo. Usa rgba de branco puro porque o `white` do tema foi
+        escurecido. O logo (marrom/caramelo) segue legível sobre o hero escuro.
+      */}
+      <nav
+        className={`mx-auto max-w-7xl rounded-2xl border border-white/50 bg-gradient-to-b from-[rgba(255,255,255,0.72)] to-[rgba(255,255,255,0.52)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 ${
+          isScrolled || isMenuOpen
+            ? "shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_10px_40px_-10px_rgba(0,0,0,0.35)]"
+            : "shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_10px_40px_-15px_rgba(0,0,0,0.5)]"
+        }`}
+      >
+        <div
+          className={`flex items-center justify-between px-4 transition-all duration-300 sm:px-6 ${
+            isScrolled ? "h-16" : "h-[72px]"
+          }`}
+        >
           <a
             href="#inicio"
             onClick={(e) => handleMenuClick(e, "#inicio")}
-            className="flex items-center space-x-2"
+            className="flex items-center"
           >
             <Image
               src="/images/logo-1.png"
               alt="NEW LINE Logo"
               width={120}
               height={60}
-              className="h-12 w-auto object-contain"
+              className={`w-auto object-contain transition-all duration-300 ${
+                isScrolled ? "h-10" : "h-12"
+              }`}
               priority
             />
           </a>
 
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center gap-1">
             {menuItems.map((item) => {
               const itemId = item.href.replace("#", "");
               const isActive = activeSection === itemId;
@@ -146,37 +159,44 @@ const Header = () => {
                   key={item.href}
                   href={item.href}
                   onClick={(e) => handleMenuClick(e, item.href)}
-                  className={`relative text-sm font-medium transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full after:origin-left after:scale-x-0 after:bg-[var(--brown)] after:transition-transform after:duration-300 after:content-[''] ${
+                  className={`relative isolate rounded-full px-4 py-2 text-[13px] font-semibold tracking-wide transition-colors ${
                     isActive
-                      ? "text-[var(--brown)] after:scale-x-100"
-                      : "text-gray-700 hover:text-[var(--brown)] hover:after:scale-x-100"
+                      ? "text-white"
+                      : "text-gray-800 hover:bg-black/5 hover:text-[var(--brown)]"
                   }`}
                 >
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                      className="absolute inset-0 -z-10 rounded-full bg-[var(--brown)] shadow-md"
+                    />
+                  )}
                   {item.label}
                 </a>
               );
             })}
-            <a
-              href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button size="sm" className="gradient-brown text-white">
-                <BsWhatsapp className="w-4 h-4 mr-2" />
-                (41) 98498-2581
-              </Button>
-            </a>
           </div>
+
+          <ContactRevealButton
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            icon={<BsWhatsapp className="h-4 w-4" />}
+            className="hidden lg:inline-flex"
+          >
+            (41) 98498-2581
+          </ContactRevealButton>
 
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+            className="lg:hidden flex h-10 w-10 items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700" />
+              <X className="w-5 h-5 text-gray-800" />
             ) : (
-              <Menu className="w-6 h-6 text-gray-700" />
+              <Menu className="w-5 h-5 text-gray-800" />
             )}
           </button>
         </div>
@@ -190,7 +210,7 @@ const Header = () => {
               transition={{ duration: 0.3 }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="py-4 space-y-4 border-t border-gray-200">
+              <div className="mx-4 space-y-1 border-t border-black/10 py-4 sm:mx-6">
                 {menuItems.map((item) => {
                   const itemId = item.href.replace("#", "");
                   const isActive = activeSection === itemId;
@@ -200,27 +220,24 @@ const Header = () => {
                       key={item.href}
                       href={item.href}
                       onClick={(e) => handleMenuClick(e, item.href)}
-                      className={`block text-base font-medium transition-colors ${
+                      className={`block rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-colors ${
                         isActive
-                          ? "text-[var(--brown)]"
-                          : "text-gray-700 hover:text-[var(--brown)]"
+                          ? "bg-[var(--brown)] text-white"
+                          : "text-gray-800 hover:bg-black/5"
                       }`}
                     >
                       {item.label}
                     </a>
                   );
                 })}
-                <div className="pt-4">
+                <div className="pt-3">
                   <a
-                    href="https://wa.me/5541984982581?text=Olá,%20vi%20seu%20contato%20e%20gostaria%20de%20saber%20mais!"
+                    href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <Button
-                      size="sm"
-                      className="w-full gradient-brown text-white"
-                    >
+                    <Button className="gradient-brown h-11 w-full rounded-full text-white">
                       <BsWhatsapp className="w-4 h-4 mr-2" />
                       (41) 98498-2581 - WhatsApp
                     </Button>

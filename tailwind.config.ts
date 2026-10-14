@@ -19,6 +19,21 @@ const config = {
     },
     extend: {
       colors: {
+        // Branco e cinzas escurecidos ~8% (RGB x 0.92), igual aos tokens do globals.css
+        white: "#ebebeb",
+        gray: {
+          50: "#e5e6e7",
+          100: "#e0e0e2",
+          200: "#d3d5d8",
+          300: "#c0c4c9",
+          400: "#9096a1",
+          500: "#626976",
+          600: "#454e5b",
+          700: "#333c4b",
+          800: "#1d2633",
+          900: "#101624",
+          950: "#030611",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -60,6 +75,9 @@ const config = {
           DEFAULT: "var(--caramel)",
           light: "var(--caramel-light)",
         },
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

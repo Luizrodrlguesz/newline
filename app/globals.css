@@ -3,35 +3,35 @@
 @tailwind utilities;
 
 :root {
-  /* Cores principais */
-  --white: #f5f5f5;
-  --brown: #784627;
-  --brown-light: #bd8530;
-  --caramel: #e3ae46;
-  --caramel-light: #d4936f;
-  --bg-color: #efebe8;
-  --text-color: #1a1a1a;
+  /* Cores principais (escurecidas ~8%: RGB x 0.92) */
+  --white: #e1e1e1;
+  --brown: #6e4024;
+  --brown-light: #ae7a2c;
+  --caramel: #d1a040;
+  --caramel-light: #c38766;
+  --bg-color: #dcd8d5;
+  --text-color: #181818;
 
   /* Shadcn UI variables */
-  --background: 0 0% 100%;
-  --foreground: 20 14.3% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 20 14.3% 4.1%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 20 14.3% 4.1%;
-  --primary: 24 45% 42%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 20 20% 85%;
-  --secondary-foreground: 24 9.8% 10%;
-  --muted: 60 4.8% 95.9%;
-  --muted-foreground: 25 5.3% 44.7%;
-  --accent: 27 35% 55%;
-  --accent-foreground: 24 9.8% 10%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 20 5.9% 90%;
-  --input: 20 5.9% 90%;
-  --ring: 24 45% 42%;
+  --background: 0 0% 92%;
+  --foreground: 20 14.3% 3.8%;
+  --card: 0 0% 92%;
+  --card-foreground: 20 14.3% 3.8%;
+  --popover: 0 0% 92%;
+  --popover-foreground: 20 14.3% 3.8%;
+  --primary: 24 45% 38.6%;
+  --primary-foreground: 0 0% 90.2%;
+  --secondary: 20 12.7% 78.2%;
+  --secondary-foreground: 24 9.8% 9.2%;
+  --muted: 60 1.5% 88.2%;
+  --muted-foreground: 25 5.3% 41.1%;
+  --accent: 27 29.3% 50.6%;
+  --accent-foreground: 24 9.8% 9.2%;
+  --destructive: 0 69.1% 55.4%;
+  --destructive-foreground: 0 0% 90.2%;
+  --border: 20 3.2% 82.8%;
+  --input: 20 3.2% 82.8%;
+  --ring: 24 45% 38.6%;
   --radius: 0.5rem;
 }
 
@@ -44,12 +44,21 @@ body {
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  overflow-x: hidden;
+  /* clip (e não hidden): hidden transforma o elemento em scroll container e
+     quebra o position: sticky de tudo dentro dele (hero e pilha de cards). */
+  overflow-x: clip;
 }
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* Sem o efeito elástico (bounce) ao passar do topo/fim da página.
+   Só no html: com overscroll-behavior no body o scroll já travou antes
+   (quando ele era scroll container por causa do overflow-x hidden). */
+html {
+  overscroll-behavior: none;
 }
 
 @layer base {

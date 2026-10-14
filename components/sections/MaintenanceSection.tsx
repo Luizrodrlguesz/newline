@@ -1,8 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Sparkles, Droplets, Wrench, Shield, Clock, CheckCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Sparkles,
+  Droplets,
+  Wrench,
+  Shield,
+  Clock,
+  CheckCircle,
+  Check,
+  ArrowRight,
+} from "lucide-react";
+import SpotlightCard from "@/components/ui/spotlight-card";
+import MagneticFillButton from "@/components/ui/buttons/magnetic-fill-button";
 
 const services = [
   {
@@ -61,129 +72,168 @@ const benefits = [
   },
 ];
 
+/**
+ * Manutenção e limpeza no padrão visual do site: títulos em Montserrat caixa
+ * alta com sobretítulo caramelo, cards de serviço com o Spotlight Card (vidro
+ * escuro + brilho caramelo que segue o cursor), diferenciais em linhas de
+ * vidro e um banner final com a foto do hero e borda branca arredondada.
+ * Fica sobre o degradê marrom escuro -> caramelo definido em app/page.tsx.
+ */
 const MaintenanceSection = () => {
   return (
-    <section id="manutencao" className="section-padding bg-white">
+    <section id="manutencao" className="section-padding">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <h2 className="text-gradient mb-4">MANUTENÇÃO E LIMPEZA</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)]">
+            Cuidado contínuo
+          </p>
+          <h2 className="mb-4 font-display font-extrabold uppercase text-white">
+            Manutenção e limpeza
+          </h2>
+          <p className="text-xl text-white/60 max-w-3xl mx-auto">
             Mantenha suas cortinas e persianas sempre em perfeito estado com
             nossos serviços especializados de limpeza, manutenção e reparos
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        {/* Serviços */}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3 lg:gap-6">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
               <motion.div
-                key={index}
+                key={service.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Card className="h-full hover:shadow-xl transition-all duration-300 group">
-                  <CardContent className="p-6">
-                    <div className="mb-6 flex justify-center">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Icon className="w-8 h-8 text-white" />
-                      </div>
+                <SpotlightCard
+                  spotlightColor="rgba(227, 174, 70, 0.9)"
+                  intensity={0.2}
+                  spotlightSize={320}
+                  borderGlow={0.9}
+                  className="group h-full rounded-[28px] backdrop-blur-sm"
+                  style={
+                    {
+                      "--spotlight-card-surface": "rgba(255, 255, 255, 0.05)",
+                      "--spotlight-card-border": "rgba(255, 255, 255, 0.1)",
+                    } as React.CSSProperties
+                  }
+                >
+                  <div className="flex h-full flex-col p-7 md:p-8">
+                    <div className="mb-6 flex items-start justify-between">
+                      <Icon className="h-9 w-9 text-[var(--caramel)] transition-transform duration-300 group-hover:scale-110" />
+                      <span className="font-display text-5xl font-extrabold leading-none text-white/10">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+
+                    <h3 className="mb-3 font-display text-xl font-bold uppercase text-white">
                       {service.title}
                     </h3>
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="mb-6 text-sm leading-relaxed text-white/65">
                       {service.description}
                     </p>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-[var(--brown)] mt-1 flex-shrink-0">
-                            ✓
-                          </span>
-                          <span className="text-sm text-gray-600">
-                            {feature}
-                          </span>
+
+                    <ul className="mt-auto space-y-2.5 border-t border-white/10 pt-6">
+                      {service.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-3">
+                          <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--caramel)]" />
+                          <span className="text-sm text-white/80">{feature}</span>
                         </li>
                       ))}
                     </ul>
-                  </CardContent>
-                </Card>
+                  </div>
+                </SpotlightCard>
               </motion.div>
             );
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-8 md:p-12 shadow-lg"
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+        {/* Diferenciais */}
+        <div className="mt-20 grid grid-cols-1 items-center gap-10 lg:mt-28 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--caramel)]">
+              Diferenciais
+            </p>
+            <h3 className="mb-5 font-display text-3xl font-extrabold uppercase leading-tight text-white md:text-4xl">
               Por que escolher nossos serviços?
             </h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Com mais de 25 anos de experiência, oferecemos serviços
-              especializados que preservam a qualidade e prolongam a vida útil
-              dos seus produtos
+            <p className="max-w-xl text-lg leading-relaxed text-white/70">
+              Do diagnóstico à entrega, cada peça recebe o cuidado certo para o
+              seu material: técnicos especializados, produtos adequados e um
+              orçamento claro antes de qualquer serviço.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-4">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
               return (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  key={benefit.title}
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                  className="text-center"
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex items-center gap-5 rounded-2xl border border-white/10 bg-white/[0.06] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition-colors duration-300 hover:border-[rgba(227,174,70,0.4)] hover:bg-white/[0.09]"
                 >
-                  <div className="mb-4 flex justify-center">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--brown)] to-[var(--caramel)] flex items-center justify-center">
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
+                  <Icon className="h-7 w-7 flex-shrink-0 text-[var(--caramel)]" />
+                  <div>
+                    <h4 className="font-display text-base font-bold uppercase text-white">
+                      {benefit.title}
+                    </h4>
+                    <p className="text-sm text-white/65">{benefit.description}</p>
                   </div>
-                  <h4 className="font-semibold text-lg text-gray-800 mb-2">
-                    {benefit.title}
-                  </h4>
-                  <p className="text-sm text-gray-600">{benefit.description}</p>
                 </motion.div>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
+        {/* Banner de orçamento */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-12 text-center"
+          transition={{ duration: 0.6 }}
+          className="relative mt-20 overflow-hidden rounded-[28px] border-[6px] border-white shadow-[0_30px_60px_-25px_rgba(0,0,0,0.6)] lg:mt-28"
         >
-          <p className="text-lg text-gray-700 mb-6">
-            Entre em contato e solicite um orçamento personalizado para
-            manutenção ou limpeza das suas cortinas e persianas
-          </p>
-          <a
-            href="#contato"
-            className="inline-block px-8 py-3 bg-gradient-to-r from-[var(--brown)] to-[var(--caramel)] text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-300 hover:scale-105"
-          >
-            Solicitar Orçamento
-          </a>
+          <Image
+            src="/images/persianas-bg.jpg"
+            alt=""
+            fill
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/30" />
+          <div className="relative flex flex-col gap-8 p-8 md:flex-row md:items-center md:justify-between md:p-12">
+            <div className="max-w-2xl">
+              <h3 className="mb-3 font-display text-2xl font-extrabold uppercase text-white md:text-3xl">
+                Suas cortinas e persianas como novas
+              </h3>
+              <p className="text-lg text-white/80">
+                Entre em contato e solicite um orçamento personalizado para
+                manutenção ou limpeza das suas cortinas e persianas
+              </p>
+            </div>
+            <MagneticFillButton href="#contato" className="flex-shrink-0">
+              Solicitar orçamento
+              <ArrowRight className="h-5 w-5" />
+            </MagneticFillButton>
+          </div>
         </motion.div>
       </div>
     </section>
@@ -191,4 +241,3 @@ const MaintenanceSection = () => {
 };
 
 export default MaintenanceSection;
-
