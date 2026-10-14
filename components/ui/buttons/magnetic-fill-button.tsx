@@ -44,7 +44,7 @@ const MagneticFillButton = ({
       onPointerLeave={reset}
       className={cn(
         "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border-2 border-[var(--caramel)] px-8 py-3.5 text-base font-semibold",
-        "[transform:translate(var(--magnetic-x,0px),var(--magnetic-y,0px))] transition-[transform,color] duration-[220ms] ease-[cubic-bezier(.16,1,.3,1)]",
+        "[transform:translate(var(--magnetic-x,0px),var(--magnetic-y,0px))] transition-[transform,color] [transition-duration:220ms] [transition-timing-function:cubic-bezier(.16,1,.3,1)]",
         "hover:text-[#17120f] focus-visible:text-[#17120f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--caramel)]",
         tone === "dark" ? "text-white" : "text-[var(--brown)]",
         className
@@ -56,7 +56,7 @@ const MagneticFillButton = ({
       </span>
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-0 bg-[var(--caramel)] transition-[height] duration-[380ms] ease-[cubic-bezier(.16,1,.3,1)] group-hover:h-full group-focus-visible:h-full"
+        className="absolute inset-x-0 bottom-0 h-0 bg-[var(--caramel)] transition-[height] [transition-duration:380ms] [transition-timing-function:cubic-bezier(.16,1,.3,1)] group-hover:h-full group-focus-visible:h-full"
       />
     </a>
   );

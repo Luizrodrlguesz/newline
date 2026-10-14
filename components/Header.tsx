@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { BsWhatsapp } from "react-icons/bs";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import ContactRevealButton from "@/components/ui/buttons/contact-reveal-button";
 
@@ -230,18 +229,15 @@ const Header = () => {
                     </a>
                   );
                 })}
-                <div className="pt-3">
-                  <a
+                <div className="px-4 pt-3">
+                  <ContactRevealButton
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block"
+                    icon={<BsWhatsapp className="h-4 w-4" />}
                   >
-                    <Button className="gradient-brown h-11 w-full rounded-full text-white">
-                      <BsWhatsapp className="w-4 h-4 mr-2" />
-                      (41) 98498-2581 - WhatsApp
-                    </Button>
-                  </a>
+                    (41) 98498-2581
+                  </ContactRevealButton>
                 </div>
               </div>
             </motion.div>

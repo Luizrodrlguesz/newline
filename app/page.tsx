@@ -12,17 +12,25 @@ export default function Home() {
     <main className="min-h-screen overflow-x-clip">
       <Header />
       <HeroSection />
-      <ProductsSection />
       {/*
-        Manutenção com degradê que começa no marrom escuro da seção de produtos
-        e termina no caramelo do logo; Aplicações vem depois, com fundo branco.
+        `relative` obrigatório: o bloco do hero (posicionado, com fundo escuro)
+        sobrepõe a primeira altura de tela (100vh) depois dele. Em telas muito
+        altas (ex.: 4K) isso passa da seção de produtos e cobriria o começo da
+        seção seguinte; posicionado, este conteúdo fica sempre por cima.
       */}
-      <div className="bg-gradient-to-b from-[#17120f] via-[var(--brown)] via-60% to-[var(--caramel)]">
-        <MaintenanceSection />
+      <div className="relative">
+        <ProductsSection />
+        {/*
+          Manutenção com degradê que começa no marrom escuro da seção de produtos
+          e termina no caramelo do logo; Aplicações vem depois, com fundo branco.
+        */}
+        <div className="bg-gradient-to-b from-[#17120f] via-[var(--brown)] via-60% to-[var(--caramel)]">
+          <MaintenanceSection />
+        </div>
+        <ApplicationsSection />
+        <AboutSection />
+        <ContactSection />
       </div>
-      <ApplicationsSection />
-      <AboutSection />
-      <ContactSection />
       <Footer />
     </main>
   );

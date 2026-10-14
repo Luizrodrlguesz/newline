@@ -60,7 +60,7 @@ const ContactSection = () => {
 
     const mensagemCodificada = encodeURIComponent(mensagemWhatsApp);
 
-    const numeroWhatsApp = "5541988657834";
+    const numeroWhatsApp = "5541984982581";
 
     window.open(
       `https://wa.me/${numeroWhatsApp}?text=${mensagemCodificada}`,
@@ -198,7 +198,7 @@ const ContactSection = () => {
                   type="tel"
                   value={formData.telefone}
                   onChange={handleChange}
-                  placeholder="(41) 3621-7074"
+                  placeholder="(00) 0000-0000"
                   className={FIELD}
                 />
               </div>
@@ -213,7 +213,7 @@ const ContactSection = () => {
                   required
                   value={formData.celular}
                   onChange={handleChange}
-                  placeholder="(41) 98498-2581"
+                  placeholder="(00) 00000-0000"
                   className={FIELD}
                 />
               </div>

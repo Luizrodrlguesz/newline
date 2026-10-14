@@ -9,7 +9,7 @@ type ArrowSlideButtonProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
 };
 
 const ARROW =
-  "absolute -rotate-45 transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)]";
+  "absolute -rotate-45 transition-transform duration-500 [transition-timing-function:cubic-bezier(.16,1,.3,1)]";
 
 /**
  * Botão-link em pílula com contorno e uma seta diagonal que sai pela ponta e
